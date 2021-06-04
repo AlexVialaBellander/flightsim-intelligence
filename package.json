@@ -2,7 +2,7 @@
   "name": "ivao_x_vatsim",
   "version": "1.0.0",
   "description": "a restful api comparing online metrics for the two businesses",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,5 +14,9 @@
     "comparison"
   ],
   "author": "Alexander Viala Bellander",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  }
 }
