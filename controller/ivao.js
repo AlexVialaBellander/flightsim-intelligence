@@ -10,4 +10,4 @@ async function get() {
     return data
 }
 
-exports.get = get();
+exports.get = get;
