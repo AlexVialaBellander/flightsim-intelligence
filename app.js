@@ -2,8 +2,10 @@ var app = require("express")();
 const vatsim = require("./controller/vatsim.js");
 const ivao = require("./controller/ivao.js");
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+const PORT = process.env.PORT || 8080 ;
+
+app.listen(PORT, _ => {
+    console.log(`Server running on port ${PORT}`);
 });
 
 app.get("/vatsim", (req, res, next) => {
