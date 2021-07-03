@@ -4,6 +4,15 @@ const ivao = require("./controller/ivao.js");
 
 const PORT = process.env.PORT || 8080 ;
 
+//JOB SCHEDULER TEST
+var cron = require('node-cron');
+
+cron.schedule('* * * * *', () => {
+  console.log('running a task every minute');
+});
+
+//
+
 app.listen(PORT, _ => {
     console.log(`Server running on port ${PORT}`);
 });
