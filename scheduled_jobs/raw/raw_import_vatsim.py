@@ -19,6 +19,7 @@ if str(response.status_code)[0] in [4, 5]:
     print('API failed')
 
 data = response.json()
+
 try:
     with connect(
         host = db_host,
@@ -31,9 +32,8 @@ try:
         add_intelligence = ("INSERT INTO lake (payload) VALUES (%s)")
         data_intelligence = ({
                 "type": "vatsim_raw",
-                "payload": json.dumps(data)
+                "payload": data
         })
-        print(data_intelligence)
         cursor.execute(add_intelligence, (json.dumps(data_intelligence), ))
         connection.commit()
         cursor.close()

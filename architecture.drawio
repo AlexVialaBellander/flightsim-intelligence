@@ -1,6 +1,6 @@
 <mxfile>
     <diagram id="omwH62tyB3dfZbzcItN9" name="Page-1">
-        <mxGraphModel dx="755" dy="1824" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="149" dy="1299" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -90,7 +90,7 @@
                 <mxCell id="6" value="&lt;font color=&quot;#999999&quot; face=&quot;helvetica&quot;&gt;Table&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="19">
                     <mxGeometry x="51" y="22.5" width="110" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="&lt;font color=&quot;#000000&quot; style=&quot;font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; font-weight: 400 ; letter-spacing: normal ; text-align: left ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;Data Lake&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="19">
+                <mxCell id="7" value="&lt;font color=&quot;#000000&quot; style=&quot;font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; font-weight: 400 ; letter-spacing: normal ; text-align: left ; text-indent: 0px ; text-transform: none ; word-spacing: 0px&quot;&gt;Data Lake&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="19">
                     <mxGeometry x="51" y="7.5" width="90" height="15" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="" style="group" vertex="1" connectable="0" parent="1">
@@ -102,7 +102,7 @@
                 <mxCell id="10" value="&lt;font color=&quot;#999999&quot; face=&quot;helvetica&quot;&gt;Table&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="21">
                     <mxGeometry x="51" y="22.5" width="110" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" value="&lt;font color=&quot;#000000&quot; style=&quot;font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; font-weight: 400 ; letter-spacing: normal ; text-align: left ; text-indent: 0px ; text-transform: none ; word-spacing: 0px ; background-color: rgb(42 , 42 , 42)&quot;&gt;Archive&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="21">
+                <mxCell id="11" value="&lt;font color=&quot;#000000&quot; style=&quot;font-family: &amp;#34;helvetica&amp;#34; ; font-size: 12px ; font-style: normal ; font-weight: 400 ; letter-spacing: normal ; text-align: left ; text-indent: 0px ; text-transform: none ; word-spacing: 0px&quot;&gt;Archive&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="21">
                     <mxGeometry x="51" y="7.5" width="90" height="15" as="geometry"/>
                 </mxCell>
                 <mxCell id="12" value="" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;shadow=0;dashed=0;shape=mxgraph.ios7.icons.data;fillColor=none;strokeColor=#4284F3;aspect=fixed;" vertex="1" parent="21">
