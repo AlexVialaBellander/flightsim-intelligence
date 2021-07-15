@@ -1,14 +1,13 @@
 import requests
-from mysql.connector import connect, Error
+from snowflake.connector import connect, Error
 import json
 
 with open("../secrets.json") as file:
     secret = json.load(file)
 
-db_host = secret['hostinger']['db_host']
-db_username = secret['hostinger']['db_username']
-db_password = secret['hostinger']['db_password']
-db_name = secret['hostinger']['db_name']
+snowflake_account = secret['snowflake']['account']
+db_user = secret['snowflake']['user']
+db_password = secret['snowflake']['password']
 
 url = 'https://map.vatsim.net/livedata/live.json'
 
@@ -24,16 +23,20 @@ def getData (res):
     data = response.json()
     try:
         with connect(
-            host = db_host,
-            user = db_username,
+            user = db_user,
             password = db_password,
-            database = db_name
+            account = snowflake_account,
+            role = 'developer',
+            warehouse = 'compute_wh',
+            database = 'lake',
+            schema = 'dataflow',
+            session_parameters = {'QUERY_TAG': 'Import vatsim raw data'}
         ) as connection:
             cursor = connection.cursor()
-            add_intelligence = ("INSERT INTO lake (payload) VALUES (%s)")
+            add_intelligence = ("INSERT INTO vatsim (payload) VALUES (%s)")
             data_intelligence = ({
                     "type": "vatsim_raw",
-                    "payload": json.dumps(data)
+                    "payload": data
             })
             cursor.execute(add_intelligence, (json.dumps(data_intelligence), ))
             connection.commit()

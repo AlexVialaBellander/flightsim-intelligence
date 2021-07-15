@@ -5,10 +5,10 @@ import json
 with open("../secrets.json") as file:
     secret = json.load(file)
 
-db_host = secret['db_host']
-db_username = secret['db_username']
-db_password = secret['db_password']
-db_name = secret['db_name']
+db_host = secret['hostinger']['db_host']
+db_username = secret['hostinger']['db_username']
+db_password = secret['hostinger']['db_password']
+db_name = secret['hostinger']['db_name']
 
 url = 'https://fs-api.grubse.com/data'
 
