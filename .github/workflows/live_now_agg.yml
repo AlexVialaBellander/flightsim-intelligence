@@ -25,7 +25,7 @@ jobs:
           ingress_settings: ALLOW_ALL
           credentials: ${{ secrets.GCP_SA_KEY }}
           source_dir: ./scheduled_jobs/gcp/snowflake/live_now_agg/
-          entry_point: postData
+          entry_point: postAggregated
           env_vars:
             SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }},
             SNOWFLAKE_GCP_USER=${{ secrets.SNOWFLAKE_GCP_USER }},
