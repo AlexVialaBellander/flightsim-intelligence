@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
 
+#test
 
 SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_GCP_USER =  os.getenv("SNOWFLAKE_GCP_USER")
@@ -19,6 +20,7 @@ def postData(arg = None):
         return ('API failed')
 
     data = response.json()
+
     try:
         with connect(
             user = SNOWFLAKE_GCP_USER,
