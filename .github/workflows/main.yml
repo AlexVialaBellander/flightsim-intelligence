@@ -9,7 +9,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'flightsim-intelligence'
+      - '.github/**'
 
   pull_request:
     branches: [ main ]
