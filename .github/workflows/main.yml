@@ -36,12 +36,19 @@ jobs:
           echo test, and deploy your project.
           
       - name: Cloud Functions Deploy
-        uses: google-github-actions/deploy-cloud-functions@v0.1.2
+        uses: google-github-actions/deploy-cloud-functions@main
         with:
           name: snowflake-vatsim-raw
           runtime: python39
-          entry_point: postData
+          region: europe-west1
           timeout: 60
-          memory_mb: 128
-          ingress_settings: ALLOW_ALL
+          #memory_mb: 128
+          #ingress_settings: ALLOW_ALL
           credentials: ${{ secrets.GCP_SA_KEY }}
+          source_dir: ./scheduled_jobs/gcp/snowflake/raw_import_vatsim/
+          entry_point: postData
+          env_vars:
+            SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }},
+            SNOWFLAKE_GCP_USER=${{ secrets.SNOWFLAKE_GCP_USER }},
+            SNOWFLAKE_GCP_USER_PASSWORD=${{ secrets.SNOWFLAKE_GCP_USER_PASSWORD }}
+
