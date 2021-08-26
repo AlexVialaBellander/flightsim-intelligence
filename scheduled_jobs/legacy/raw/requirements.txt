@@ -2,3 +2,4 @@
 # package>=version
 requests
 mysql-connector-python
+snowflake-connector-python

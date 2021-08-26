@@ -1,0 +1,8 @@
+snowflake_test
+validate.py
+*.env
+*.log
+*.vscode
+*.DS_Store
+**/node_modules
+secrets.json 
