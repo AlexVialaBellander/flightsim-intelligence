@@ -9,7 +9,7 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/**'
+      - 'scheduled_jobs/gcp/snowflake/raw_import_vatsim/**'
 
   pull_request:
     branches: [ main ]
