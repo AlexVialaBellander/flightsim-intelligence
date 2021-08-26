@@ -1,10 +1,10 @@
-name: snowflake_raw_import_ivao_gcp_deployment
+name: snowflake_live_now_agg_gcp_deployment
 on:
   push:
     branches:
       - 'main'
     paths:
-      - 'scheduled_jobs/gcp/snowflake/raw_import_ivao/**'
+      - 'scheduled_jobs/gcp/snowflake/live_now_agg/**'
   pull_request:
     branches: [ main ]
   # Allows you to run this workflow manually from the Actions tab
@@ -17,14 +17,14 @@ jobs:
       - name: Cloud Functions Deploy
         uses: google-github-actions/deploy-cloud-functions@main
         with:
-          name: snowflake-ivao-raw
+          name: snowflake-live-now-agg
           runtime: python39
           region: europe-west1
           timeout: 60
           memory_mb: 128
           ingress_settings: ALLOW_ALL
           credentials: ${{ secrets.GCP_SA_KEY }}
-          source_dir: ./scheduled_jobs/gcp/snowflake/raw_import_ivao/
+          source_dir: ./scheduled_jobs/gcp/snowflake/live_now_agg/
           entry_point: postData
           env_vars:
             SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }},
