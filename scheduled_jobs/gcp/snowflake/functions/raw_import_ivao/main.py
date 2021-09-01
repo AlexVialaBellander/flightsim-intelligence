@@ -43,5 +43,4 @@ def postData(arg = None):
     except Error as e:
         print(e)
         return(e)
-
-postData()
+    return 'sucess'

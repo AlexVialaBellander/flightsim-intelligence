@@ -49,5 +49,4 @@ def postAggregated(arg = None):
     except Error as e:
         print(e)
         return e
-
-postAggregated()
+    return 'sucess'

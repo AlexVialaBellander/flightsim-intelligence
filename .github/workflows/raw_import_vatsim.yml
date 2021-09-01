@@ -26,7 +26,4 @@ jobs:
           credentials: ${{ secrets.GCP_SA_KEY }}
           source_dir: ./scheduled_jobs/gcp/snowflake/functions/raw_import_vatsim/
           entry_point: postData
-          env_vars:
-            SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }},
-            SNOWFLAKE_GCP_USER=${{ secrets.SNOWFLAKE_GCP_USER }},
-            SNOWFLAKE_GCP_USER_PASSWORD=${{ secrets.SNOWFLAKE_GCP_USER_PASSWORD }}
+          env_vars: SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }},SNOWFLAKE_GCP_USER=${{ secrets.SNOWFLAKE_GCP_USER }},SNOWFLAKE_GCP_USER_PASSWORD=${{ secrets.SNOWFLAKE_GCP_USER_PASSWORD }}
