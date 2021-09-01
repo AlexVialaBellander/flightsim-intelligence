@@ -10,6 +10,8 @@ SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_GCP_USER =  os.getenv("SNOWFLAKE_GCP_USER")
 SNOWFLAKE_GCP_USER_PASSWORD = os.getenv("SNOWFLAKE_GCP_USER_PASSWORD")
 
+print(SNOWFLAKE_GCP_USER)
+
 def postAggregated(arg = None):
 
     response = requests.get('https://fs-api.grubse.com/data') 
