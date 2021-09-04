@@ -1,4 +1,7 @@
 # flightsim-intelligence
+A personal playground/training project using:
+![syss](https://user-images.githubusercontent.com/42417723/132095621-7bf62656-3b37-4dd7-a95c-c55417a2ddaa.png)
+
 
 A flightsim intelligence service developed by Alexander Viala Bellander.
 
