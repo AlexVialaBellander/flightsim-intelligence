@@ -1,4 +1,5 @@
-﻿# flightsim-intelligence
+# flightsim-intelligence
+
 A flightsim intelligence service developed by Alexander Viala Bellander.
 
 The system collects telemetry and server status data from Flightsim Network Operators for business intellegence and educational purposes. Intelligence reports were to be created weekly.
@@ -18,3 +19,10 @@ I realised that what we would have liked is to use snowflake staging and pipelin
 Similarly we could upload the documents to GCS (or other cloud storage) and run a Cloud Function (FaaS) that fetches the data in the bucket and inserts it to the database weekly.
 
 These options would likely reduce operating costs since storage is much less expensive than having to operate the database hourly.
+
+
+## analysis results
+![image](https://user-images.githubusercontent.com/42417723/132095305-57c4742c-2c98-439d-9ed4-5fd805cfafb9.png)
+![image](https://user-images.githubusercontent.com/42417723/132095311-de50cf72-3a3d-439d-a70a-9bc0cbd94701.png)
+![image](https://user-images.githubusercontent.com/42417723/132095319-6b774655-d080-440a-9577-cd3aea40dc01.png)
+
