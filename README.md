@@ -29,3 +29,6 @@ These options would likely reduce operating costs since storage is much less exp
 ![image](https://user-images.githubusercontent.com/42417723/132095311-de50cf72-3a3d-439d-a70a-9bc0cbd94701.png)
 ![image](https://user-images.githubusercontent.com/42417723/132095319-6b774655-d080-440a-9577-cd3aea40dc01.png)
 
+## copyright
+Copyright Alexander Viala Bellander 2021 © 
+All rights reserved
