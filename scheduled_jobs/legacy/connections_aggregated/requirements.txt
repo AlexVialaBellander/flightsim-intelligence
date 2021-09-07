@@ -1,4 +1,0 @@
-# Function dependencies, for example:
-# package>=version
-requests
-mysql-connector-python
