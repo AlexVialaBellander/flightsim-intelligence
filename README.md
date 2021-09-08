@@ -29,6 +29,137 @@ These options would likely reduce operating costs since storage is much less exp
 ![image](https://user-images.githubusercontent.com/42417723/132095311-de50cf72-3a3d-439d-a70a-9bc0cbd94701.png)
 ![image](https://user-images.githubusercontent.com/42417723/132095319-6b774655-d080-440a-9577-cd3aea40dc01.png)
 
+## sql and tables
+Below are snippets of SQL and table examples to better understand the underlying data and its transformation. The data fetched from the Network Operators were large JSON documents with different schemas, however, with similar content; such as: `altitude`, `true heading`, `latitude`, `longitude`, etc.
+
+The SQL syntax follows `SnowSQL`
+
+### LAKE.DATAFLOW.IVAO
+![lake](sql/snowflake/table_examples/LAKE.DATAFLOW.IVAO.png)
+
+___
+
+### MODEL.IVAO.DATAFLOW_SNAPSHOT
+We flatten the json data loaded into the lake into rows. No data validation is made.
+Documentation: https://docs.snowflake.com/en/sql-reference/functions/flatten.html
+
+We define table columns from recurring keys in the json document.
+
+![lake](sql/snowflake/table_examples/MODEL.IVAO.DATAFLOW_SNAPSHOT.png)
+
+<details>
+<summary>Click to see SQL</summary>
+
+```sql
+create or replace view MODEL.IVAO.DATAFLOW_SNAPSHOT as (
+    select 
+        value:callsign::varchar callsign,
+        insert_at as created_at,
+        value:flightPlan:arrivalId::varchar arrival_icao,
+        value:flightPlan:departureId::varchar dep_icao,
+        value:lastTrack:latitude::float lat,
+        value:lastTrack:longitude::float lon,
+        value:lastTrack:altitude::number altitude,
+        value:lastTrack:heading::number heading,
+        value:lastTrack:groundSpeed::number ground_speed,
+        value:id::varchar id,
+        value:lastTrack last_track_obj,
+        value:pilotSession pilot_session_obj,
+        value:rating::int rating,
+        value:serverId::varchar server_id,
+        value:softwareTypeId::varchar software_type_id,
+        value:softwareVersion::varchar software_version,
+        value:time::int time,
+        value:userId::int user_id
+    from lake.dataflow.ivao, lateral flatten( input => payload::variant::object:payload:clients:pilots) vm
+);
+```
+
+</details>
+
+### MODEL.VATSIM.TELEMETRY
+We flatten the json data loaded into the lake into rows. No data validation is made.
+Documentation: https://docs.snowflake.com/en/sql-reference/functions/flatten.html
+
+We define table columns from recurring keys in the json document.
+
+![lake](sql/snowflake/table_examples/MODEL.VATSIM.TELEMETRY.png)
+
+<details>
+<summary>Click to see SQL</summary>
+
+```sql
+create or replace view MODEL.VATSIM.TELEMETRY as (
+    select 
+        insert_at, 
+        value:uid::varchar flight_id,
+        value:cid::varchar user_id,
+        value:name::varchar user_name,
+        value:rating::varchar user_rating,
+        value:callsign::varchar callsign,
+        value:aircraft::varchar aircraft_type, 
+        value:arr::varchar arrival_icao,
+        value:dep::varchar dep_icao, 
+        value:alt::varchar::int altitude, 
+        value:crzalt::varchar cruise_altitude,
+        value:gndspd::varchar::int ground_speed,
+        value:hdg::varchar::int heading,
+        value:lat::varchar lat,
+        value:lon::varchar lon,
+        value:route::varchar route
+    from lake.dataflow.vatsim, lateral flatten( input => payload::variant::object:payload ) vm
+);
+```
+
+</details>
+
+___
+
+### MART.CORE.SNAPSHOT_EVENT_V1
+![lake](sql/snowflake/table_examples/MART.CORE.SNAPSHOT_EVENT_V1.png)
+
+
+<details>
+<summary>Click to see SQL</summary>
+
+```sql
+create or replace view MART.CORE.SNAPSHOT_EVENT_V1 as (
+    select 
+        convert_timezone('UTC', created_at)::timestamp_ntz(0) as created_at_utc,
+        'ivao' as network_operator,
+        'ivao_' || id as flight_id,
+        callsign,
+        'ivao_' || user_id as user_id,
+        arrival_icao,
+        dep_icao as departure_icao,
+        lat,
+        lon,
+        altitude,
+        heading,
+        ground_speed
+    from 
+        model.ivao.dataflow_snapshot
+    union
+    select
+        convert_timezone('UTC', insert_at)::timestamp_ntz(0) as created_at_utc,
+        'vatsim' as network_operator,
+        'vatsim_' || flight_id as flight_id,
+        callsign,
+        'vatsim_' || user_id as user_id,
+        arrival_icao,
+        dep_icao as departure_icao,
+        lat::float,
+        lon::float,
+        altitude,
+        heading,
+        ground_speed
+    from
+        model.vatsim.telemetry
+);
+```
+
+</details>
+
 ## copyright
 Copyright Alexander Viala Bellander 2021 © 
 All rights reserved.
