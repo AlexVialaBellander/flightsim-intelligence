@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
 
-#test comment
-
 SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_GCP_USER =  os.getenv("SNOWFLAKE_GCP_USER")
 SNOWFLAKE_GCP_USER_PASSWORD = os.getenv("SNOWFLAKE_GCP_USER_PASSWORD")
