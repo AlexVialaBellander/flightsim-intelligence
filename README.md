@@ -35,6 +35,14 @@ Below are snippets of SQL and table examples to better understand the underlying
 The SQL syntax follows `SnowSQL`
 
 ### LAKE.DATAFLOW.IVAO
+The source data can be found at:
+IVAO: https://api.ivao.aero/v2/tracker/whazzup
+VATSIM: https://map.vatsim.net/livedata/live.json
+
+Offline examples can be found at:
+[IVAO](sql/snowflake/table_examples/ivao_feed_data.json)
+[VATSIM](sql/snowflake/table_examples/vatsim_feed_data.json)
+
 ![lake](sql/snowflake/table_examples/LAKE.DATAFLOW.IVAO.png)
 
 ___
