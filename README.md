@@ -3,7 +3,7 @@ A personal playground/training project using:
 ![syss](https://user-images.githubusercontent.com/42417723/132095621-7bf62656-3b37-4dd7-a95c-c55417a2ddaa.png)
 
 
-A flightsim intelligence service developed by Alexander Viala Bellander.
+A third-party flightsim intelligence data platform and service developed by Alexander Viala Bellander. 
 
 The system collects telemetry and server status data from Flightsim Network Operators for business intellegence and educational purposes. Intelligence reports were to be created weekly.
 
