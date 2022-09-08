@@ -1,12 +1,13 @@
+import coloredlogs
 import hashlib
 import json
-import os
 import logging
+import os
 import sys
-import coloredlogs
 import traceback
 
 from datetime import datetime
+
 
 # Load main.json config file
 CONFIG = json.load(open('main.json'))
@@ -31,7 +32,7 @@ class Data():
         self.hash = hashlib.md5(json.dumps(payload).encode('utf-8')).hexdigest()
         self.created_at = datetime.now().isoformat()
         self.source = source
-        self.owner = CONFIG
+        self.owner = dict(name=CONFIG["name"], version=CONFIG["version"])
         self.payload = payload
 
 class Manager():

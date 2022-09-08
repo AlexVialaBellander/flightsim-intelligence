@@ -1,11 +1,15 @@
-from typing import Any
+import time
+import json
+
 from schedule import every, repeat, run_pending
 from types import ModuleType
-import time
+from typing import Any
 
-from services.providers import ivao, vatsim
 from services.manager import Manager
+from services.providers import ivao, vatsim
 
+# Load main.json config file
+CONFIG = json.load(open('main.json'))
 SERVICES = [ivao, vatsim]
 PROVIDERS = [Manager(service) for service in SERVICES]
 
