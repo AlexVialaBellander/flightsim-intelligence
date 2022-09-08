@@ -12,8 +12,6 @@ cron.schedule('* * * * *', () => {
   console.log('running a task every minute');
 });
 
-//
-
 app.listen(PORT, _ => {
     console.log(`Server running on port ${PORT}`);
 });
