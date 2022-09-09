@@ -7,22 +7,24 @@ import time
 
 
 from datetime import datetime, timedelta
-import dateutil.parser as parser
 from schedule import every, repeat, run_pending
 
 from services.manager import *
 from services.providers import ivao, vatsim
 
 # Load main.json config file
-CONFIG = json.load(open('main.json'))
+CONFIG = json.load(open("main.json"))
 SERVICES = [ivao, vatsim]
 PROVIDERS = [Manager(service) for service in SERVICES]
+
 
 class Config:
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
+
 CONFIG = Config(**CONFIG)
+
 
 @repeat(every(10).seconds)
 def fetch_raw() -> None:
@@ -30,12 +32,14 @@ def fetch_raw() -> None:
         provider.fetch()
         provider.write()
 
+
 @repeat(every().day.at("00:00:30"))
 def run_consolidation(
-    date_from = datetime.now().date() - timedelta(days=-1),
-    date_to = datetime.now().date(),
-    ) -> None:
+    date_from=datetime.now().date() - timedelta(days=-1),
+    date_to=datetime.now().date(),
+) -> None:
     consolidate(date_from, date_to)
+
 
 while True:
     run_pending()

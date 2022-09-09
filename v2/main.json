@@ -1,9 +1,5 @@
 {
-    "name":"local-data-management-service",
-    "version":"2022-09-08",
-
-    "tasks":{
-        "fetch_raw":"10s",
-        "consolidate":"1d"
-    }
+    "name": "local-data-management-service",
+    "version": "2022-09-08",
+    "tasks": {"fetch_raw": "10s", "consolidate": "1d"},
 }
