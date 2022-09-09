@@ -58,7 +58,7 @@ class Manager():
         # write data to file if content has changed
         if self.prior.hash != self.current.hash:
             with open(f"{path}/{self.name}_{datetime.now().isoformat()}.json", "w") as file:
-                json.dump(self.current.__dict__, file, indent=4)
+                json.dump(self.current.__dict__, file)
             logging.info(f"Saved: {self.name}, {self.current.hash}")
         else:
             logging.info(f"No change: {self.name}, {self.current.hash}")
