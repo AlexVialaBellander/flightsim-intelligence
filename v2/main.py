@@ -24,7 +24,7 @@ class Config:
 
 
 CONFIG = Config(**CONFIG)
-
+# NOT USING ABOVE CONFIG YET
 
 @repeat(every(10).seconds)
 def fetch_raw() -> None:

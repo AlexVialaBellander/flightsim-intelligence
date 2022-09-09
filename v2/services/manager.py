@@ -151,7 +151,11 @@ def consolidate(date_from: datetime, date_to: datetime) -> None:
                 controllers_tables[service].append(df_controllers)
 
     # Write CSV to consolidated directory
-    path = f"datastore/consolidated/{min_date.strftime('%Y-%m-%d')}_{max_date.strftime('%Y-%m-%d')}"
+    if min_date == max_date:
+        dir_name = min_date.strftime('%Y-%m-%d')
+    else:
+        dir_name = f"{min_date.strftime('%Y-%m-%d')}_{max_date.strftime('%Y-%m-%d')}"
+    path = f"datastore/consolidated/{dir_name}"
     os.makedirs(path, exist_ok=True)
     logging.debug("Writing concolidated data to CSV")
     for service in ["ivao", "vatsim"]:
