@@ -113,57 +113,58 @@ def consolidate(date_from: datetime, date_to: datetime) -> None:
     logging.info(f"Found {len(days)} days of data to consolidate.")
     min_date = parser.parse("3200-01-01")
     max_date = parser.parse("1690-01-01")
-    for day in days:
-        for file in os.listdir(f"datastore/{day}"):
-            with open(f"datastore/{day}/{file}", "r") as data:
-                min_date = min(min_date, parser.parse(day))
-                max_date = max(max_date, parser.parse(day))
-                service = file.split("_")[0]
+    if len(days) != 0:
+        for day in days:
+            for file in os.listdir(f"datastore/{day}"):
+                with open(f"datastore/{day}/{file}", "r") as data:
+                    min_date = min(min_date, parser.parse(day))
+                    max_date = max(max_date, parser.parse(day))
+                    service = file.split("_")[0]
 
-                # Begin JSON Parsing
-                df_top = pd.json_normalize(json.load(data))
+                    # Begin JSON Parsing
+                    df_top = pd.json_normalize(json.load(data))
 
-                if service == "vatsim":
-                    df_general = df_top[df_top.columns[:11]]
-                elif service == "ivao":
-                    df_general = df_top[[*df_top.columns[:6], *df_top.columns[12:]]]
-                df_general.insert(0, "service", service)
-                df_general.insert(1, "consolidated_at", consolidation_time)
+                    if service == "vatsim":
+                        df_general = df_top[df_top.columns[:11]]
+                    elif service == "ivao":
+                        df_general = df_top[[*df_top.columns[:6], *df_top.columns[12:]]]
+                    df_general.insert(0, "service", service)
+                    df_general.insert(1, "consolidated_at", consolidation_time)
 
-                if service == "vatsim":
-                    df_pilots = pd.json_normalize(df_top["payload.pilots"][0]).merge(
-                        df_general[["hash"]], how="cross"
-                    )
-                    df_controllers = pd.json_normalize(
-                        df_top["payload.controllers"][0]
-                    ).merge(df_general[["hash"]], how="cross")
-                elif service == "ivao":
-                    df_pilots = pd.json_normalize(
-                        df_top["payload.clients.pilots"][0]
-                    ).merge(df_general[["hash"]], how="cross")
-                    df_controllers = pd.json_normalize(
-                        df_top["payload.clients.atcs"][0]
-                    ).merge(df_general[["hash"]], how="cross")
+                    if service == "vatsim":
+                        df_pilots = pd.json_normalize(df_top["payload.pilots"][0]).merge(
+                            df_general[["hash"]], how="cross"
+                        )
+                        df_controllers = pd.json_normalize(
+                            df_top["payload.controllers"][0]
+                        ).merge(df_general[["hash"]], how="cross")
+                    elif service == "ivao":
+                        df_pilots = pd.json_normalize(
+                            df_top["payload.clients.pilots"][0]
+                        ).merge(df_general[["hash"]], how="cross")
+                        df_controllers = pd.json_normalize(
+                            df_top["payload.clients.atcs"][0]
+                        ).merge(df_general[["hash"]], how="cross")
 
-                # Append to lists
-                general_tables[service].append(df_general)
-                pilots_tables[service].append(df_pilots)
-                controllers_tables[service].append(df_controllers)
+                    # Append to lists
+                    general_tables[service].append(df_general)
+                    pilots_tables[service].append(df_pilots)
+                    controllers_tables[service].append(df_controllers)
 
-    # Write CSV to consolidated directory
-    if min_date == max_date:
-        dir_name = min_date.strftime('%Y-%m-%d')
-    else:
-        dir_name = f"{min_date.strftime('%Y-%m-%d')}_{max_date.strftime('%Y-%m-%d')}"
-    path = f"datastore/consolidated/{dir_name}"
-    os.makedirs(path, exist_ok=True)
-    logging.debug("Writing concolidated data to CSV")
-    for service in ["ivao", "vatsim"]:
-        for dfs, name in [
-            (general_tables, "general"),
-            (pilots_tables, "pilots"),
-            (controllers_tables, "controllers"),
-        ]:
-            df = pd.concat(dfs[service])
-            df.to_csv(f"{path}/{service}_{name}.csv")
+        # Write CSV to consolidated directory
+        if min_date == max_date:
+            dir_name = min_date.strftime('%Y-%m-%d')
+        else:
+            dir_name = f"{min_date.strftime('%Y-%m-%d')}_{max_date.strftime('%Y-%m-%d')}"
+        path = f"datastore/consolidated/{dir_name}"
+        os.makedirs(path, exist_ok=True)
+        logging.debug("Writing concolidated data to CSV")
+        for service in ["ivao", "vatsim"]:
+            for dfs, name in [
+                (general_tables, "general"),
+                (pilots_tables, "pilots"),
+                (controllers_tables, "controllers"),
+            ]:
+                df = pd.concat(dfs[service])
+                df.to_csv(f"{path}/{service}_{name}.csv")
     logging.info(f"Consolidation finished.")
