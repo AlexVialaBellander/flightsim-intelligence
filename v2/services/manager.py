@@ -107,13 +107,13 @@ def consolidate(date_from: datetime, date_to: datetime) -> None:
         for day in os.listdir("datastore")
         if not day == "consolidated"
         and not day.startswith(".")
-        and parser.parse(day).date() >= date_to
-        and parser.parse(day).date() < date_from
+        and parser.parse(day).date() >= date_from
+        and parser.parse(day).date() < date_to
     ]
     logging.info(f"Found {len(days)} days of data to consolidate.")
+    min_date = parser.parse("3200-01-01")
+    max_date = parser.parse("1690-01-01")
     for day in days:
-        min_date = parser.parse("3200-01-01")
-        max_date = parser.parse("1690-01-01")
         for file in os.listdir(f"datastore/{day}"):
             with open(f"datastore/{day}/{file}", "r") as data:
                 min_date = min(min_date, parser.parse(day))
