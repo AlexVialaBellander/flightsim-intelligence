@@ -34,7 +34,7 @@ def fetch_raw() -> None:
 
 @repeat(every().day.at("00:00:30"))
 def run_consolidation(
-    date_from=datetime.now().date() - timedelta(days=-1),
+    date_from=datetime.now().date() - timedelta(days=1),
     date_to=datetime.now().date(),
 ) -> None:
     consolidate(date_from, date_to)
