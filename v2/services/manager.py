@@ -9,6 +9,7 @@ import sys
 import traceback
 
 from datetime import datetime
+from typing import Union
 
 # Load main.json config file
 CONFIG = json.load(open("main.json"))
@@ -30,7 +31,7 @@ coloredlogs.install()
 
 # Data Management
 class Data:
-    def __init__(self, source, payload) -> None:
+    def __init__(self, source: str, payload: json) -> None:
         self.hash = hashlib.md5(json.dumps(payload).encode("utf-8")).hexdigest()
         self.created_at = datetime.now().isoformat()
         self.source = source
@@ -92,7 +93,7 @@ class Manager:
             logging.info(f"No change: {self.name}, {self.current.hash}")
 
 
-def consolidate(date_from: datetime, date_to: datetime) -> None:
+def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
     logging.info(f"Consolidating data...")
     # Create a timestamp for when consolidation begins
     consolidation_time = datetime.now().isoformat()
@@ -168,3 +169,4 @@ def consolidate(date_from: datetime, date_to: datetime) -> None:
                 df = pd.concat(dfs[service])
                 df.to_csv(f"{path}/{service}_{name}.csv")
     logging.info(f"Consolidation finished.")
+    return path if path is not None else None
