@@ -119,39 +119,44 @@ def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
         for day in days:
             for file in os.listdir(f"datastore/{day}"):
                 with open(f"datastore/{day}/{file}", "r") as data:
-                    min_date = min(min_date, parser.parse(day))
-                    max_date = max(max_date, parser.parse(day))
-                    service = file.split("_")[0]
+                    try:
+                        
+                        min_date = min(min_date, parser.parse(day))
+                        max_date = max(max_date, parser.parse(day))
+                        service = file.split("_")[0]
 
-                    # Begin JSON Parsing
-                    df_top = pd.json_normalize(json.load(data))
+                        # Begin JSON Parsing
+                        df_top = pd.json_normalize(json.load(data))
 
-                    if service == "vatsim":
-                        df_general = df_top[df_top.columns[:11]]
-                    elif service == "ivao":
-                        df_general = df_top[[*df_top.columns[:6], *df_top.columns[12:]]]
-                    df_general.insert(0, "service", service)
-                    df_general.insert(1, "consolidated_at", consolidation_time)
+                        if service == "vatsim":
+                            df_general = df_top[df_top.columns[:11]]
+                        elif service == "ivao":
+                            df_general = df_top[[*df_top.columns[:6], *df_top.columns[12:]]]
+                        df_general.insert(0, "service", service)
+                        df_general.insert(1, "consolidated_at", consolidation_time)
 
-                    if service == "vatsim":
-                        df_pilots = pd.json_normalize(df_top["payload.pilots"][0]).merge(
-                            df_general[["hash"]], how="cross"
-                        )
-                        df_controllers = pd.json_normalize(
-                            df_top["payload.controllers"][0]
-                        ).merge(df_general[["hash"]], how="cross")
-                    elif service == "ivao":
-                        df_pilots = pd.json_normalize(
-                            df_top["payload.clients.pilots"][0]
-                        ).merge(df_general[["hash"]], how="cross")
-                        df_controllers = pd.json_normalize(
-                            df_top["payload.clients.atcs"][0]
-                        ).merge(df_general[["hash"]], how="cross")
+                        if service == "vatsim":
+                            df_pilots = pd.json_normalize(df_top["payload.pilots"][0]).merge(
+                                df_general[["hash"]], how="cross"
+                            )
+                            df_controllers = pd.json_normalize(
+                                df_top["payload.controllers"][0]
+                            ).merge(df_general[["hash"]], how="cross")
+                        elif service == "ivao":
+                            df_pilots = pd.json_normalize(
+                                df_top["payload.clients.pilots"][0]
+                            ).merge(df_general[["hash"]], how="cross")
+                            df_controllers = pd.json_normalize(
+                                df_top["payload.clients.atcs"][0]
+                            ).merge(df_general[["hash"]], how="cross")
 
-                    # Append to lists
-                    general_tables[service].append(df_general)
-                    pilots_tables[service].append(df_pilots)
-                    controllers_tables[service].append(df_controllers)
+                        # Append to lists
+                        general_tables[service].append(df_general)
+                        pilots_tables[service].append(df_pilots)
+                        controllers_tables[service].append(df_controllers)
+                    except Exception:
+                        logging.exception("Error parsing file: {}".format(file))
+                        logging.exception(traceback.format_exc())
 
         # Write CSV to consolidated directory
         if min_date == max_date:
