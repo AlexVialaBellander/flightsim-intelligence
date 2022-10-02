@@ -1,5 +1,42 @@
 {
     "name": "local-data-management-service",
     "version": "2022-09-08",
-    "tasks": {"fetch_raw": "10s", "consolidate": "1d"}
+    "config": {
+        "data_dir": "/data",
+        "consolidation": {
+            "max_age": "90d",
+            "max_size": "100G",
+            "max_files": 1000,
+            "columns": {
+                "pilots": {
+                    "user_id" : {"ivao":"userId","vatsim":"cid"},
+                    "callsign" : {"ivao":"callsign","vatsim":"callsign"},
+                    "aircraft" : {"ivao":"flightPlan.aircraft.model","vatsim":"flight_plan.aircraft_short"},
+                    "flight_rule" : {"ivao":"flightPlan.flightRules","vatsim":"flight_plan.flight_rules"},
+                    "departure" : {"ivao":"flightPlan.departureId","vatsim":"flight_plan.departure"},
+                    "arrival" : {"ivao":"flightPlan.arrivalId","vatsim":"flight_plan.arrival"},
+                    "altitude" : {"ivao":"lastTrack.altitude", "vatsim":"altitude"},
+                    "latitude" : {"ivao":"lastTrack.latitude", "vatsim":"latitude"},
+                    "longitude" : {"ivao":"lastTrack.longitude", "vatsim":"longitude"},
+                    "heading" : {"ivao":"lastTrack.heading", "vatsim":"heading"},
+                    "groundspeed" : {"ivao":"lastTrack.groundSpeed", "vatsim":"groundspeed"},
+                    "last_updated" : {"ivao":"createdAt", "vatsim":"last_updated"},
+                    "hash" : {"ivao":"hash", "vatsim":"hash"}
+                },
+                "controllers" : {
+                    "user_id" : {"ivao":"userId","vatsim":"cid"},
+                    "callsign" : {"ivao":"callsign","vatsim":"callsign"},
+                    "frequency" : {"ivao":"atcSession.frequency","vatsim":"frequency"},
+                    "type" : {"ivao":"atcSession.position","vatsim":"facility"},
+                    "last_updated" : {"ivao":"createdAt", "vatsim":"last_updated"},
+                    "hash" : {"ivao":"hash", "vatsim":"hash"}
+                },
+                "general" : {
+                    "service" : {"ivao":"service","vatsim":"service"},
+                    "connections" : {"ivao":"payload.connections.total","vatsim":"payload.general.connected_clients"},
+                    "hash" : {"ivao":"hash", "vatsim":"hash"}
+                }
+            }
+        }
+    }
 }

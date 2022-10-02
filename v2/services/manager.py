@@ -13,6 +13,7 @@ from typing import Union
 
 # Load main.json config file
 CONFIG = json.load(open("main.json"))
+columns = CONFIG['config']['consolidation']['columns']
 
 file_handler = logging.FileHandler(filename="logs.log")
 stdout_handler = logging.StreamHandler(stream=sys.stdout)
@@ -104,12 +105,12 @@ def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
 
     # In datastore for each date directory, load each file and create a dataframe
     days = [
-        day
-        for day in os.listdir("datastore")
-        if not day == "consolidated"
-        and not day.startswith(".")
-        and parser.parse(day).date() >= date_from
-        and parser.parse(day).date() < date_to
+        folder_name
+        for folder_name in os.listdir("datastore")
+        if not folder_name == "consolidated"
+        and not folder_name.startswith(".")
+        and parser.parse(folder_name).date() >= date_from
+        and parser.parse(folder_name).date() < date_to
     ]
     logging.info(f"Found {len(days)} days of data to consolidate.")
     min_date = parser.parse("3200-01-01")
@@ -168,5 +169,26 @@ def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
             ]:
                 df = pd.concat(dfs[service])
                 df.to_csv(f"{path}/{service}_{name}.csv")
+        return path if path is not None else None
     logging.info(f"Consolidation finished.")
-    return path if path is not None else None
+    return None
+
+def process(path: str) -> None:
+    # fetch data from source and create dataframes
+    dfs = {}
+    for file in os.listdir(path):
+        with open(f"{path}/{file}", "r") as data:
+            dfs[file] = pd.read_csv(f"{path}/{file}")
+    dfs.keys()
+    # for each dataframe, rename columns, add service column and concat
+    for filename, df in dfs.items():
+        service_name, content_type = filename[:-4].split("_")
+        column_map = {value[service_name]:key for key, value in [content_type].items()}
+        df = df.rename(columns=column_map)
+        df["service"] = service_name
+        dfs[filename] = df[list(column_map.values()) + ["service"]]
+    # combine dfs
+    pilots_data = pd.concat([dfs['ivao_pilots.csv'], dfs['vatsim_pilots.csv']])
+    controller_data = pd.concat([dfs['ivao_controllers.csv'], dfs['vatsim_controllers.csv']])
+    pilots_data.to_csv(f"{path}/pilots_data.csv")
+    controller_data.to_csv(f"{path}/controller_data.csv")
