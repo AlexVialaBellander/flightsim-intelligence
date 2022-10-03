@@ -94,14 +94,22 @@ class Manager:
             logging.info(f"No change: {self.name}, {self.current.hash}")
 
 
-def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
+def consolidate(date_from: datetime, date_to: datetime) -> Union[list,None]:
     logging.info(f"Consolidating data...")
     # Create a timestamp for when consolidation begins
     consolidation_time = datetime.now().isoformat()
 
-    general_tables = dict(ivao=[], vatsim=[])
-    pilots_tables = dict(ivao=[], vatsim=[])
-    controllers_tables = dict(ivao=[], vatsim=[])
+    # services   
+    services = ["ivao", "vatsim"]
+    
+    # data models
+    model_names = ["pilots", "controllers", "general"]                
+    
+    # TODO: use os.path
+    temp_consolidation_path = "datastore/consolidated"
+   
+    # create consolidated directory
+    os.makedirs(temp_consolidation_path, exist_ok=True)
 
     # In datastore for each date directory, load each file and create a dataframe
     days = [
@@ -115,26 +123,41 @@ def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
     logging.info(f"Found {len(days)} days of data to consolidate.")
     min_date = parser.parse("3200-01-01")
     max_date = parser.parse("1690-01-01")
+    
+    # init variable that includes the header for the first iteration
+    header = {service:True for service in services}
+    
     if len(days) != 0:
         for day in days:
+            logging.info(f"Processing {day}...")
             for file in os.listdir(f"datastore/{day}"):
                 with open(f"datastore/{day}/{file}", "r") as data:
                     try:
-                        
+                        # update min and max dates
                         min_date = min(min_date, parser.parse(day))
                         max_date = max(max_date, parser.parse(day))
+                        # fetch service name
                         service = file.split("_")[0]
+                        if service not in services:
+                            logging.critical(f"Unknown service {service}")
+                            raise Exception(f"Unknown service {service}")
+                        # add empty list of dataframes to process
+                        batch = dict()
 
-                        # Begin JSON Parsing
+                        # begin JSON Parsing
                         df_top = pd.json_normalize(json.load(data))
 
+                        # fetch different columns depending on service
                         if service == "vatsim":
                             df_general = df_top[df_top.columns[:11]]
                         elif service == "ivao":
                             df_general = df_top[[*df_top.columns[:6], *df_top.columns[12:]]]
+                        
+                        # add service and consolidation time to dataframes
                         df_general.insert(0, "service", service)
                         df_general.insert(1, "consolidated_at", consolidation_time)
-
+                            
+                        # process columns depending on service
                         if service == "vatsim":
                             df_pilots = pd.json_normalize(df_top["payload.pilots"][0]).merge(
                                 df_general[["hash"]], how="cross"
@@ -149,51 +172,75 @@ def consolidate(date_from: datetime, date_to: datetime) -> Union[str,None]:
                             df_controllers = pd.json_normalize(
                                 df_top["payload.clients.atcs"][0]
                             ).merge(df_general[["hash"]], how="cross")
+                        
+                        # add dfs to batch
+                        batch["pilots"] = df_pilots
+                        batch["controllers"] = df_controllers
+                        batch["general"] = df_general
+                        
+                        # check model names
+                        if list(batch.keys()) != model_names:
+                            logging.critical(f"Unknown model {batch.keys()}")
+                            raise Exception(f"Unknown model {batch.keys()}")
 
-                        # Append to lists
-                        general_tables[service].append(df_general)
-                        pilots_tables[service].append(df_pilots)
-                        controllers_tables[service].append(df_controllers)
+                        # for each df in batch, append data to disk on a temporary file
+                        for name in model_names:
+                            df = batch.get(name)
+                            df.to_csv(
+                                f"{temp_consolidation_path}/.temp_{service}_{name}.csv",
+                                mode="a",
+                                header=header[service],
+                                index=False,
+                            )
+                        # change flag to not include header on next iteration
+                        header[service] = False
+                    
                     except Exception:
                         logging.exception("Error parsing file: {}".format(file))
                         logging.exception(traceback.format_exc())
 
         # Write CSV to consolidated directory
+        # create directory name from max and min date
         if min_date == max_date:
             dir_name = min_date.strftime('%Y-%m-%d')
         else:
             dir_name = f"{min_date.strftime('%Y-%m-%d')}_{max_date.strftime('%Y-%m-%d')}"
+        # update path variable to include directory name
         path = f"datastore/consolidated/{dir_name}"
+        # create directory
         os.makedirs(path, exist_ok=True)
-        logging.debug("Writing concolidated data to CSV")
-        for service in ["ivao", "vatsim"]:
-            for dfs, name in [
-                (general_tables, "general"),
-                (pilots_tables, "pilots"),
-                (controllers_tables, "controllers"),
-            ]:
-                df = pd.concat(dfs[service])
-                df.to_csv(f"{path}/{service}_{name}.csv")
-        return path if path is not None else None
-    logging.info(f"Consolidation finished.")
+        logging.debug(f"Writing concolidated data to {path}")
+        # return paths
+        paths = []
+        # for each service and model name, read temporary file and write to consolidated directory
+        for service in services:
+            for model in model_names:
+                os.replace(f"{temp_consolidation_path}/.temp_{service}_{model}.csv", f"{path}/{service}_{model}.csv")
+                paths.append(f"{path}/{service}_{model}.csv")
+        logging.info(f"Consolidation finished.")
+        return paths
+    logging.info(f"Exited consolidation.")
     return None
 
-def process(path: str) -> None:
+def process(paths: list) -> None:
     # fetch data from source and create dataframes
     dfs = {}
-    for file in os.listdir(path):
-        with open(f"{path}/{file}", "r") as data:
-            dfs[file] = pd.read_csv(f"{path}/{file}")
-    dfs.keys()
+    for path in paths:
+        print(path)
+        filename = path.split("/")[-1][:-4]
+        dfs[filename] = pd.read_csv(
+            path, 
+            on_bad_lines="warn")
     # for each dataframe, rename columns, add service column and concat
     for filename, df in dfs.items():
-        service_name, content_type = filename[:-4].split("_")
-        column_map = {value[service_name]:key for key, value in [content_type].items()}
+        service_name, model = filename.split("_")
+        column_map = {value[service_name]:key for key, value in columns[model].items()}
         df = df.rename(columns=column_map)
         df["service"] = service_name
         dfs[filename] = df[list(column_map.values()) + ["service"]]
     # combine dfs
-    pilots_data = pd.concat([dfs['ivao_pilots.csv'], dfs['vatsim_pilots.csv']])
-    controller_data = pd.concat([dfs['ivao_controllers.csv'], dfs['vatsim_controllers.csv']])
+    path = "/".join(paths[0].split("/")[:-1])
+    pilots_data = pd.concat([dfs['ivao_pilots'], dfs['vatsim_pilots']])
+    controller_data = pd.concat([dfs['ivao_controllers'], dfs['vatsim_controllers']])
     pilots_data.to_csv(f"{path}/pilots_data.csv")
     controller_data.to_csv(f"{path}/controller_data.csv")
